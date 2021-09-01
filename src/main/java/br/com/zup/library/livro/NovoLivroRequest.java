@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 
 public class NovoLivroRequest {
 
-    @NotBlank(message = "Título deve ser preenchido.")
+    @NotBlank(message = "Titulo deve ser preenchido.")
     private final String titulo;
-    @NotNull(message = "Preço deve ser preenchido.")
+    @NotNull(message = "Preco deve ser preenchido.")
     private final BigDecimal preco;
     @NotBlank(message = "ISBN deve ser preenchido.")
-    @CampoUnico(campo = "isbn", classe = Livro.class, message = "ISBN já cadastrado.")
+    @CampoUnico(campo = "isbn", classe = Livro.class, message = "ISBN ja cadastrado.")
     private final String isbn;
 
     public NovoLivroRequest(String titulo, BigDecimal preco, String isbn) {
