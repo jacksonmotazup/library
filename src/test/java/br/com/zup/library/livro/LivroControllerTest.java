@@ -88,12 +88,14 @@ class LivroControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         var livros = livroRepository.findAll();
-        System.out.println(response);
+
         assertAll(
                 () -> assertEquals(0, livros.size()),
                 () -> assertTrue(response.contains("titulo")),
                 () -> assertTrue(response.contains("preco")),
-                () -> assertTrue(response.contains("isbn"))
+                () -> assertTrue(response.contains("isbn")),
+                () -> assertTrue(response.contains("não deve estar em branco")),
+                () -> assertTrue(response.contains("não deve ser nulo"))
         );
     }
 
