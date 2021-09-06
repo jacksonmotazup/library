@@ -25,8 +25,8 @@ public class LivroController {
     public Long cadastra(@Valid @RequestBody NovoLivroRequest request) {
         var novoLivro = request.toModel();
 
-        var livro = livroRepository.save(novoLivro);
+        livroRepository.save(novoLivro);
 
-        return livro.getId();
+        return novoLivro.getId();
     }
 }
