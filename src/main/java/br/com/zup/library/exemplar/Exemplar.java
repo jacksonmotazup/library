@@ -18,8 +18,8 @@ public class Exemplar {
     @ManyToOne
     private Livro livro;
 
-    public Exemplar(String circulacao, Livro livro) {
-        this.circulacao = Circulacao.valueOf(circulacao);
+    public Exemplar(Circulacao circulacao, Livro livro) {
+        this.circulacao = circulacao;
         this.livro = livro;
     }
 

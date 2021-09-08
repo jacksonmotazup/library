@@ -115,8 +115,7 @@ class ExemplarControllerTest {
                         .content(testUtils.toJson(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
-                .andExpect(jsonPath("campo").value("circulacao"))
-                .andReturn().getResponse().getContentAsString();
+                .andExpect(jsonPath("campo").value("circulacao"));
 
         var exemplares = exemplarRepository.findAll();
 
@@ -136,8 +135,7 @@ class ExemplarControllerTest {
                         .content(testUtils.toJson(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("Circulação deve ser livre ou restrita"))
-                .andExpect(jsonPath("campo").value("circulacao"))
-                .andReturn().getResponse().getContentAsString();
+                .andExpect(jsonPath("campo").value("circulacao"));
 
         var exemplares = exemplarRepository.findAll();
 
