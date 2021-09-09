@@ -18,6 +18,6 @@ public class NovoExemplarRequest {
 
     public Exemplar toModel(Livro livro) {
         Assert.notNull(livro, "Livro não pode ser nulo");
-        return new Exemplar(Circulacao.valueOf(circulacao), livro);
+        return new Exemplar(TipoCirculacao.valueOf(circulacao), livro);
     }
 }

@@ -14,12 +14,12 @@ public class Exemplar {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Enumerated(STRING)
-    private Circulacao circulacao;
+    private TipoCirculacao tipoCirculacao;
     @ManyToOne
     private Livro livro;
 
-    public Exemplar(Circulacao circulacao, Livro livro) {
-        this.circulacao = circulacao;
+    public Exemplar(TipoCirculacao tipoCirculacao, Livro livro) {
+        this.tipoCirculacao = tipoCirculacao;
         this.livro = livro;
     }
 
@@ -34,8 +34,8 @@ public class Exemplar {
         return id;
     }
 
-    public Circulacao getCirculacao() {
-        return circulacao;
+    public TipoCirculacao getCirculacao() {
+        return tipoCirculacao;
     }
 
     public Livro getLivro() {

@@ -12,12 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 
-import static br.com.zup.library.exemplar.Circulacao.LIVRE;
-import static br.com.zup.library.exemplar.Circulacao.RESTRITA;
+import static br.com.zup.library.exemplar.TipoCirculacao.LIVRE;
+import static br.com.zup.library.exemplar.TipoCirculacao.RESTRITA;
 import static br.com.zup.library.utils.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,9 +41,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        var response = mockMvc.perform(post(uri)
-                        .contentType(APPLICATION_JSON)
-                        .content(testUtils.toJson(request)))
+        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -67,9 +63,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        var response = mockMvc.perform(post(uri)
-                        .contentType(APPLICATION_JSON)
-                        .content(testUtils.toJson(request)))
+        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -88,10 +82,9 @@ class ExemplarControllerTest {
     @DisplayName("Não deve cadastrar um exemplar de um livro quando ISBN não existir, retornar status 404")
     void naoDeveCadastrarExemplarQuandoIsbnNaoExistir() throws Exception {
         var request = criaNovoExemplarRequestRestrita();
+        var uri = "/api/v1/livros/1/exemplares";
 
-        var response = mockMvc.perform(post("/api/v1/livros/1/exemplares")
-                        .contentType(APPLICATION_JSON)
-                        .content(testUtils.toJson(request)))
+        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().getErrorMessage();
 
@@ -110,9 +103,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        mockMvc.perform(post(uri)
-                        .contentType(APPLICATION_JSON)
-                        .content(testUtils.toJson(request)))
+        mockMvc.perform(testUtils.montaRequisicao(request, uri))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
                 .andExpect(jsonPath("campo").value("circulacao"));
@@ -130,9 +121,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        mockMvc.perform(post(uri)
-                        .contentType(APPLICATION_JSON)
-                        .content(testUtils.toJson(request)))
+        mockMvc.perform(testUtils.montaRequisicao(request, uri))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("Circulação deve ser LIVRE ou RESTRITA"))
                 .andExpect(jsonPath("campo").value("circulacao"));
