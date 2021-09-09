@@ -134,7 +134,7 @@ class ExemplarControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(testUtils.toJson(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("mensagem").value("Circulação deve ser livre ou restrita"))
+                .andExpect(jsonPath("mensagem").value("Circulação deve ser LIVRE ou RESTRITA"))
                 .andExpect(jsonPath("campo").value("circulacao"));
 
         var exemplares = exemplarRepository.findAll();

@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 public class NovoExemplarRequest {
 
     @NotBlank
-    @Pattern(regexp = "(?i)(livre|restrita)", message = "Circulação deve ser livre ou restrita")
+    @Pattern(regexp = "(LIVRE|RESTRITA)", message = "Circulação deve ser LIVRE ou RESTRITA")
     private String circulacao;
 
     public String getCirculacao() {
@@ -18,6 +18,6 @@ public class NovoExemplarRequest {
 
     public Exemplar toModel(Livro livro) {
         Assert.notNull(livro, "Livro não pode ser nulo");
-        return new Exemplar(Circulacao.valueOf(circulacao.toUpperCase()), livro);
+        return new Exemplar(Circulacao.valueOf(circulacao), livro);
     }
 }

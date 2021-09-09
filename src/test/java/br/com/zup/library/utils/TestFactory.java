@@ -16,8 +16,8 @@ public class TestFactory {
     public static final BigDecimal PRECO = BigDecimal.valueOf(100);
     public static final BigDecimal PRECO_NULO = null;
     public static final String CAMPO_CIRCULACAO = "circulacao";
-    public static final String CIRCULACAO_LIVRE = "livre";
-    public static final String CIRCULACAO_RESTRITA = "restrita";
+    public static final String CIRCULACAO_LIVRE = "LIVRE";
+    public static final String CIRCULACAO_RESTRITA = "RESTRITA";
     public static final String CIRCULACAO_INVALIDA = "invalida";
 
     public static NovoLivroRequest criaNovoLivroRequest() {
