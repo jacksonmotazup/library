@@ -37,7 +37,7 @@ class LivroControllerTest {
     void deveCadastrarLivro() throws Exception {
         var request = criaNovoLivroRequest();
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, URI_LIVROS))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_LIVROS))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
 
@@ -56,7 +56,7 @@ class LivroControllerTest {
 
         livroRepository.save(request.toModel());
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, URI_LIVROS))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_LIVROS))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("mensagem").value("ISBN ja cadastrado."))
                 .andExpect(MockMvcResultMatchers.jsonPath("campo").value("isbn"))
@@ -76,7 +76,7 @@ class LivroControllerTest {
     void naoDeveCadastrarLivroComParametrosEmBranco() throws Exception {
         var request = criaNovoLivroRequestEmBranco();
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, URI_LIVROS))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_LIVROS))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 

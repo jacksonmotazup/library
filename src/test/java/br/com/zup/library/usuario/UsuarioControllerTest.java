@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 
 import static br.com.zup.library.usuario.TipoUsuario.PADRAO;
 import static br.com.zup.library.usuario.TipoUsuario.PESQUISADOR;
@@ -37,19 +38,23 @@ class UsuarioControllerTest {
     void deveCadastrarUsuarioTipoPadrao() throws Exception {
         var request = criaNovoUsuarioPadrao();
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, URI_USUARIOS))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_USUARIOS))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        var usuarios = usuarioRepository.findAll();
-        var usuario = usuarios.get(0);
+        var resposta = testUtils.fromJson(response, NovoUsuarioResponse.class);
 
-        assertAll(
-                () -> assertEquals(1, usuarios.size()),
-                () -> assertNotNull(usuario),
-                () -> assertEquals(usuario.getId().toString(), response),
-                () -> assertEquals(PADRAO, usuario.getTipoUsuario())
-        );
+        usuarioRepository.findById(resposta.getId())
+                .ifPresent(usuario -> assertAll(
+                                () -> assertNotNull(usuario),
+                                () -> assertEquals(PADRAO, usuario.getTipoUsuario()),
+                                () -> assertEquals(usuario.getId(), resposta.getId()),
+                                () -> assertEquals(usuario.getTipoUsuario().toString(), resposta.getTipoUsuario()),
+                                () -> assertEquals(LocalDate.now(), resposta.getDataCriacao())
+                        )
+                );
+
+
     }
 
     @Test
@@ -57,18 +62,21 @@ class UsuarioControllerTest {
     void deveCadastrarUsuarioTipoPesquisador() throws Exception {
         var request = criaNovoUsuarioPesquisador();
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, URI_USUARIOS))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_USUARIOS))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        var usuarios = usuarioRepository.findAll();
-        var usuario = usuarios.get(0);
+        var resposta = testUtils.fromJson(response, NovoUsuarioResponse.class);
+
+        var usuario = usuarioRepository.findById(resposta.getId())
+                .orElse(fail());
 
         assertAll(
-                () -> assertEquals(1, usuarios.size()),
                 () -> assertNotNull(usuario),
-                () -> assertEquals(usuario.getId().toString(), response),
-                () -> assertEquals(PESQUISADOR, usuario.getTipoUsuario())
+                () -> assertEquals(PESQUISADOR, usuario.getTipoUsuario()),
+                () -> assertEquals(usuario.getId(), resposta.getId()),
+                () -> assertEquals(usuario.getTipoUsuario().toString(), resposta.getTipoUsuario()),
+                () -> assertEquals(LocalDate.now(), resposta.getDataCriacao())
         );
     }
 
@@ -78,7 +86,7 @@ class UsuarioControllerTest {
     void naoDeveCadastrarUsuarioComTipoEmBranco() throws Exception {
         var request = criaNovoUsuarioEmBranco();
 
-        mockMvc.perform(testUtils.montaRequisicao(request, URI_USUARIOS))
+        mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_USUARIOS))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
                 .andExpect(jsonPath("campo").value("tipo"));
@@ -93,7 +101,7 @@ class UsuarioControllerTest {
     void naoDeveCadastrarExemplarComCirculacaoNaoForLivreOuRestrita() throws Exception {
         var request = criaNovoUsuarioTipoInvalido();
 
-        mockMvc.perform(testUtils.montaRequisicao(request, URI_USUARIOS))
+        mockMvc.perform(testUtils.montaRequisicaoPost(request, URI_USUARIOS))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("Tipo deve ser PADRAO ou PESQUISADOR"))
                 .andExpect(jsonPath("campo").value("tipo"));
@@ -102,6 +110,5 @@ class UsuarioControllerTest {
 
         assertEquals(0, exemplares.size());
     }
-
 
 }

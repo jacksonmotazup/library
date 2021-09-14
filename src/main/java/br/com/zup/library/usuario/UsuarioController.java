@@ -22,11 +22,11 @@ public class UsuarioController {
 
     @PostMapping
     @Transactional
-    public Long cadastra(@RequestBody @Valid NovoUsuarioRequest request) {
+    public NovoUsuarioResponse cadastra(@RequestBody @Valid NovoUsuarioRequest request) {
         var novoUsuario = request.toModel();
 
         usuarioRepository.save(novoUsuario);
 
-        return novoUsuario.getId();
+        return new NovoUsuarioResponse(novoUsuario);
     }
 }

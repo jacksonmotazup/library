@@ -1,5 +1,6 @@
 package br.com.zup.library.utils;
 
+import br.com.zup.library.usuario.NovoUsuarioResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,18 @@ public class TestUtils {
     @Autowired
     private ObjectMapper mapper;
 
-    public String toJson(Object obj) throws JsonProcessingException {
+    private String toJson(Object obj) throws JsonProcessingException {
         return this.mapper.writeValueAsString(obj);
     }
 
-    public MockHttpServletRequestBuilder montaRequisicao(Object request,
-                                                         String uri) throws JsonProcessingException {
+    public MockHttpServletRequestBuilder montaRequisicaoPost(Object request,
+                                                             String uri) throws JsonProcessingException {
         return post(uri)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(request));
+    }
+
+    public NovoUsuarioResponse fromJson(String response, Class<?> novoUsuarioResponseClass) throws JsonProcessingException {
+        return (NovoUsuarioResponse) mapper.readValue(response, novoUsuarioResponseClass);
     }
 }

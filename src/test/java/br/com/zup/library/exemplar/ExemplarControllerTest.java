@@ -41,7 +41,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, uri))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -63,7 +63,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, uri))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -84,7 +84,7 @@ class ExemplarControllerTest {
         var request = criaNovoExemplarRequestRestrita();
         var uri = "/api/v1/livros/1/exemplares";
 
-        var response = mockMvc.perform(testUtils.montaRequisicao(request, uri))
+        var response = mockMvc.perform(testUtils.montaRequisicaoPost(request, uri))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().getErrorMessage();
 
@@ -103,7 +103,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        mockMvc.perform(testUtils.montaRequisicao(request, uri))
+        mockMvc.perform(testUtils.montaRequisicaoPost(request, uri))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
                 .andExpect(jsonPath("campo").value("circulacao"));
@@ -121,7 +121,7 @@ class ExemplarControllerTest {
         var livro = livroRepository.save(criaNovoLivroRequest().toModel());
         var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-        mockMvc.perform(testUtils.montaRequisicao(request, uri))
+        mockMvc.perform(testUtils.montaRequisicaoPost(request, uri))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("mensagem").value("Circulação deve ser LIVRE ou RESTRITA"))
                 .andExpect(jsonPath("campo").value("circulacao"));
