@@ -20,8 +20,8 @@ public class TestUtils {
         return this.mapper.writeValueAsString(obj);
     }
 
-    public MockHttpServletRequestBuilder montaRequisicaoPost(Object request,
-                                                             String uri) throws JsonProcessingException {
+    public MockHttpServletRequestBuilder aPostWith(Object request,
+                                                   String uri) throws JsonProcessingException {
         return post(uri)
                 .contentType(APPLICATION_JSON)
                 .content(toJson(request));
