@@ -1,5 +1,6 @@
 package br.com.zup.library.exemplar;
 
+import br.com.zup.library.compartilhado.handler.ExceptionHandlerResponse;
 import br.com.zup.library.livro.LivroRepository;
 import br.com.zup.library.livro.NovoLivroRequest;
 import br.com.zup.library.utils.TestUtils;
@@ -19,7 +20,6 @@ import static br.com.zup.library.exemplar.TipoCirculacao.LIVRE;
 import static br.com.zup.library.exemplar.TipoCirculacao.RESTRITA;
 import static br.com.zup.library.utils.Constantes.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -103,14 +103,22 @@ class ExemplarControllerTest {
             var livro = livroRepository.save(criaNovoLivroRequest().toModel());
             var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-            mockMvc.perform(testUtils.aPostWith(request, uri))
+            var response = mockMvc.perform(testUtils.aPostWith(request, uri))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
-                    .andExpect(jsonPath("campo").value("circulacao"));
+                    .andReturn().getResponse().getContentAsString();
 
             var exemplares = exemplarRepository.count();
 
-            assertEquals(0, exemplares);
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
+
+            assertAll(
+                    () -> assertEquals(0, exemplares),
+                    () -> assertEquals(1, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("circulacao")),
+                    () -> assertTrue(resposta.getErros().get("circulacao").contains("não deve estar em branco"))
+
+            );
+
         }
 
         @Test
@@ -121,14 +129,21 @@ class ExemplarControllerTest {
             var livro = livroRepository.save(criaNovoLivroRequest().toModel());
             var uri = String.format("/api/v1/livros/%s/exemplares", livro.getIsbn());
 
-            mockMvc.perform(testUtils.aPostWith(request, uri))
+            var response = mockMvc.perform(testUtils.aPostWith(request, uri))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("mensagem").value("Circulação deve ser LIVRE ou RESTRITA"))
-                    .andExpect(jsonPath("campo").value("circulacao"));
+                    .andReturn().getResponse().getContentAsString();
 
             var exemplares = exemplarRepository.count();
 
-            assertEquals(0, exemplares);
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
+
+            assertAll(
+                    () -> assertEquals(0, exemplares),
+                    () -> assertEquals(1, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("circulacao")),
+                    () -> assertTrue(resposta.getErros().get("circulacao").contains("Circulação deve ser LIVRE ou RESTRITA"))
+
+            );
         }
 
     }

@@ -1,6 +1,5 @@
 package br.com.zup.library.utils;
 
-import br.com.zup.library.usuario.NovoUsuarioResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class TestUtils {
                 .content(toJson(request));
     }
 
-    public NovoUsuarioResponse fromJson(String response, Class<?> novoUsuarioResponseClass) throws JsonProcessingException {
-        return (NovoUsuarioResponse) mapper.readValue(response, novoUsuarioResponseClass);
+    public Object fromJson(String json, Class<?> classe) throws JsonProcessingException {
+        return mapper.readValue(json, classe);
     }
 }
