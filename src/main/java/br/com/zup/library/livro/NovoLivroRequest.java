@@ -13,7 +13,7 @@ public class NovoLivroRequest {
     @NotNull
     private final BigDecimal preco;
     @NotBlank
-    @CampoUnico(campo = "isbn", classe = Livro.class, message = "ISBN ja cadastrado.")
+    @CampoUnico(campo = "isbn", classe = Livro.class, message = "ISBN já cadastrado")
     private final String isbn;
 
     public NovoLivroRequest(String titulo, BigDecimal preco, String isbn) {

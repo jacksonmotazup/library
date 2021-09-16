@@ -1,26 +1,36 @@
 package br.com.zup.library.compartilhado.handler;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestControllerAdvice
 public class ExceptionsHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionHandlerResponse> methodArgumentNotValidExceptionHandler(
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionHandlerResponse methodArgumentNotValidExceptionHandler(
             MethodArgumentNotValidException ex) {
-        var fieldErrors = ex.getBindingResult().getFieldErrors();
-        var campo = fieldErrors.stream().map(FieldError::getField).collect(Collectors.joining(" - "));
-        var mensagem = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(" - "));
 
-        var response = new ExceptionHandlerResponse(campo, mensagem, String.valueOf(HttpStatus.BAD_REQUEST));
+        var map = new HashMap<String, List<String>>();
 
-        return ResponseEntity.badRequest().body(response);
+        ex.getBindingResult().getFieldErrors().forEach(erro -> {
+            if (map.containsKey(erro.getField())) {
+                map.get(erro.getField()).add(erro.getDefaultMessage());
+            } else {
+                var list = new ArrayList<String>();
+                list.add(erro.getDefaultMessage());
+                map.put(erro.getField(), list);
+            }
+        });
+
+        return new ExceptionHandlerResponse(map);
     }
 }

@@ -1,5 +1,6 @@
 package br.com.zup.library.livro;
 
+import br.com.zup.library.compartilhado.handler.ExceptionHandlerResponse;
 import br.com.zup.library.utils.TestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.transaction.Transactional;
 
@@ -60,16 +60,17 @@ class LivroControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, URI_LIVROS))
                     .andExpect(status().isBadRequest())
-                    .andExpect(MockMvcResultMatchers.jsonPath("mensagem").value("ISBN ja cadastrado."))
-                    .andExpect(MockMvcResultMatchers.jsonPath("campo").value("isbn"))
                     .andReturn().getResponse().getContentAsString();
 
-            var livros = livroRepository.findAll();
+            var livros = livroRepository.count();
+
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
 
             assertAll(
-                    () -> assertEquals(1, livros.size()),
-                    () -> assertTrue(response.contains("ISBN ja cadastrado.")),
-                    () -> assertTrue(response.contains("isbn"))
+                    () -> assertEquals(1, livros),
+                    () -> assertEquals(1, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("isbn")),
+                    () -> assertTrue(resposta.getErros().get("isbn").contains("ISBN já cadastrado"))
             );
         }
 
@@ -82,15 +83,23 @@ class LivroControllerTest {
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
-            var livros = livroRepository.findAll();
+            var livros = livroRepository.count();
+
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
 
             assertAll(
-                    () -> assertEquals(0, livros.size()),
-                    () -> assertTrue(response.contains("titulo")),
-                    () -> assertTrue(response.contains("preco")),
-                    () -> assertTrue(response.contains("isbn")),
-                    () -> assertTrue(response.contains("não deve estar em branco")),
-                    () -> assertTrue(response.contains("não deve ser nulo"))
+                    () -> assertEquals(0, livros),
+                    () -> assertEquals(3, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("titulo")),
+                    () -> assertTrue(resposta.getErros().get("titulo").contains("não deve estar em branco")),
+                    () -> assertEquals(1, resposta.getErros().get("titulo").size()),
+                    () -> assertTrue(resposta.getErros().containsKey("isbn")),
+                    () -> assertTrue(resposta.getErros().get("isbn").contains("não deve estar em branco")),
+                    () -> assertEquals(1, resposta.getErros().get("isbn").size()),
+                    () -> assertTrue(resposta.getErros().containsKey("preco")),
+                    () -> assertTrue(resposta.getErros().get("preco").contains("não deve ser nulo")),
+                    () -> assertEquals(1, resposta.getErros().get("preco").size()),
+                    () -> assertNotNull(resposta.getOcorridoEm())
             );
         }
 

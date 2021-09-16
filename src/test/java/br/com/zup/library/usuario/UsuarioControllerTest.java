@@ -1,5 +1,6 @@
 package br.com.zup.library.usuario;
 
+import br.com.zup.library.compartilhado.handler.ExceptionHandlerResponse;
 import br.com.zup.library.utils.TestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +19,6 @@ import static br.com.zup.library.usuario.TipoUsuario.PADRAO;
 import static br.com.zup.library.usuario.TipoUsuario.PESQUISADOR;
 import static br.com.zup.library.utils.Constantes.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -47,7 +47,7 @@ class UsuarioControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            var resposta = testUtils.fromJson(response, NovoUsuarioResponse.class);
+            var resposta = (NovoUsuarioResponse) testUtils.fromJson(response, NovoUsuarioResponse.class);
 
             usuarioRepository.findById(resposta.getId())
                     .ifPresentOrElse(usuario -> assertAll(
@@ -69,7 +69,7 @@ class UsuarioControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            var resposta = testUtils.fromJson(response, NovoUsuarioResponse.class);
+            var resposta = (NovoUsuarioResponse) testUtils.fromJson(response, NovoUsuarioResponse.class);
 
             usuarioRepository.findById(resposta.getId())
                     .ifPresentOrElse(usuario -> assertAll(
@@ -88,14 +88,20 @@ class UsuarioControllerTest {
         void naoDeveCadastrarUsuarioComTipoEmBranco() throws Exception {
             var request = criaNovoUsuarioEmBranco();
 
-            mockMvc.perform(testUtils.aPostWith(request, URI_USUARIOS))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_USUARIOS))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("mensagem").value("não deve estar em branco"))
-                    .andExpect(jsonPath("campo").value("tipo"));
+                    .andReturn().getResponse().getContentAsString();
 
             var exemplares = usuarioRepository.count();
 
-            assertEquals(0, exemplares);
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
+
+            assertAll(
+                    () -> assertEquals(0, exemplares),
+                    () -> assertEquals(1, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("tipo")),
+                    () -> assertTrue(resposta.getErros().get("tipo").contains("não deve estar em branco"))
+            );
         }
 
         @Test
@@ -103,14 +109,21 @@ class UsuarioControllerTest {
         void naoDeveCadastrarExemplarComCirculacaoNaoForLivreOuRestrita() throws Exception {
             var request = criaNovoUsuarioTipoInvalido();
 
-            mockMvc.perform(testUtils.aPostWith(request, URI_USUARIOS))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_USUARIOS))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("mensagem").value("Tipo deve ser PADRAO ou PESQUISADOR"))
-                    .andExpect(jsonPath("campo").value("tipo"));
+                    .andReturn().getResponse().getContentAsString();
 
             var exemplares = usuarioRepository.count();
 
-            assertEquals(0, exemplares);
+            var resposta = (ExceptionHandlerResponse) testUtils.fromJson(response, ExceptionHandlerResponse.class);
+
+            assertAll(
+                    () -> assertEquals(0, exemplares),
+                    () -> assertEquals(1, resposta.getErros().size()),
+                    () -> assertTrue(resposta.getErros().containsKey("tipo")),
+                    () -> assertTrue(resposta.getErros().get("tipo").contains("Tipo deve ser PADRAO ou PESQUISADOR"))
+            );
+
         }
     }
 
