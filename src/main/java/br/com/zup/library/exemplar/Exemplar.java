@@ -17,6 +17,7 @@ public class Exemplar {
     private TipoCirculacao tipoCirculacao;
     @ManyToOne
     private Livro livro;
+    private boolean disponivel = true;
 
     public Exemplar(TipoCirculacao tipoCirculacao, Livro livro) {
         this.tipoCirculacao = tipoCirculacao;
@@ -40,5 +41,10 @@ public class Exemplar {
 
     public Livro getLivro() {
         return livro;
+    }
+
+    public Exemplar alteraDisponibilidade() {
+        this.disponivel = !this.disponivel;
+        return this;
     }
 }
