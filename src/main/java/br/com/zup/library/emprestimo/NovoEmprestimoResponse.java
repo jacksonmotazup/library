@@ -2,14 +2,17 @@ package br.com.zup.library.emprestimo;
 
 public class NovoEmprestimoResponse {
 
-    private final Long idEmprestimo;
-    private final String tituloLivro;
-    private final Integer prazoDevolucao;
+    private Long idEmprestimo;
+    private String tituloLivro;
+    private Integer prazoDevolucao;
 
     public NovoEmprestimoResponse(Emprestimo emprestimo) {
         this.idEmprestimo = emprestimo.getId();
         this.tituloLivro = emprestimo.getExemplar().getLivro().getTitulo();
         this.prazoDevolucao = emprestimo.getPrazoDevolucao();
+    }
+
+    public NovoEmprestimoResponse() {
     }
 
     public Long getIdEmprestimo() {

@@ -58,7 +58,7 @@ public class EmprestimoService {
     }
 
     private void validaEmprestimo(Usuario usuario) {
-        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.findAllByUsuario(usuario).size() > 5) {
+        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.findAllByUsuario(usuario).size() >= 4) {
             throw new ResponseStatusException(BAD_REQUEST, "Usuário padrão só pode ter 5 empréstimos simultâneos");
         }
     }

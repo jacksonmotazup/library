@@ -43,6 +43,10 @@ public class Exemplar {
         return livro;
     }
 
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
     public Exemplar alteraDisponibilidade() {
         this.disponivel = !this.disponivel;
         return this;
