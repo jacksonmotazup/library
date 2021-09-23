@@ -47,8 +47,13 @@ public class Exemplar {
         return disponivel;
     }
 
-    public Exemplar alteraDisponibilidade() {
-        this.disponivel = !this.disponivel;
+    public Exemplar reserva() {
+        this.disponivel = false;
+        return this;
+    }
+
+    public Exemplar devolve() {
+        this.disponivel = true;
         return this;
     }
 }

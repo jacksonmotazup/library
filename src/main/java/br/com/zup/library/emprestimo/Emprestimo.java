@@ -11,14 +11,14 @@ public class Emprestimo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer prazoDevolucao;
+    private Integer prazoDevolucaoDias;
     @ManyToOne
     private Exemplar exemplar;
     @ManyToOne
     private Usuario usuario;
 
-    public Emprestimo(Integer prazoDevolucao, Exemplar exemplar, Usuario usuario) {
-        this.prazoDevolucao = prazoDevolucao;
+    public Emprestimo(Integer prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
+        this.prazoDevolucaoDias = prazoDevolucaoDias;
         this.exemplar = exemplar;
         this.usuario = usuario;
     }
@@ -38,7 +38,7 @@ public class Emprestimo {
         return exemplar;
     }
 
-    public Integer getPrazoDevolucao() {
-        return prazoDevolucao;
+    public Integer getPrazoDevolucaoDias() {
+        return prazoDevolucaoDias;
     }
 }

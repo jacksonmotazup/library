@@ -9,7 +9,7 @@ public class NovoEmprestimoResponse {
     public NovoEmprestimoResponse(Emprestimo emprestimo) {
         this.idEmprestimo = emprestimo.getId();
         this.tituloLivro = emprestimo.getExemplar().getLivro().getTitulo();
-        this.prazoDevolucao = emprestimo.getPrazoDevolucao();
+        this.prazoDevolucao = emprestimo.getPrazoDevolucaoDias();
     }
 
     public NovoEmprestimoResponse() {

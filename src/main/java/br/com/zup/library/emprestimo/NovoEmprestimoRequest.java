@@ -7,9 +7,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
-import static br.com.zup.library.usuario.TipoUsuario.PADRAO;
 import static br.com.zup.library.usuario.TipoUsuario.PESQUISADOR;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -24,12 +22,12 @@ public class NovoEmprestimoRequest {
     @NotNull
     private final Long idUsuario;
     @Range(min = 1, max = 60)
-    private final Integer prazoDevolucao;
+    private final Integer prazoDevolucaoDias;
 
-    public NovoEmprestimoRequest(Long idLivro, Long idUsuario, Integer prazoDevolucao) {
+    public NovoEmprestimoRequest(Long idLivro, Long idUsuario, Integer prazoDevolucaoDias) {
         this.idLivro = idLivro;
         this.idUsuario = idUsuario;
-        this.prazoDevolucao = prazoDevolucao;
+        this.prazoDevolucaoDias = prazoDevolucaoDias;
     }
 
     public Long getIdLivro() {
@@ -40,8 +38,8 @@ public class NovoEmprestimoRequest {
         return idUsuario;
     }
 
-    public Integer getPrazoDevolucao() {
-        return prazoDevolucao;
+    public Integer getPrazoDevolucaoDias() {
+        return prazoDevolucaoDias;
     }
 
     public SolicitacaoEmprestimo toModel(UsuarioRepository usuarioRepository, LivroRepository livroRepository) {
@@ -57,10 +55,12 @@ public class NovoEmprestimoRequest {
     }
 
     private Integer retornaPrazoDevolucao(TipoUsuario tipoUsuario) {
-        if (PADRAO.equals(tipoUsuario) && Objects.isNull(prazoDevolucao)) {
-            throw new ResponseStatusException(BAD_REQUEST, "Prazo deve ser preenchido");
-        } else if (PESQUISADOR.equals(tipoUsuario) && Objects.isNull(prazoDevolucao)) {
+        if (prazoDevolucaoDias != null) {
+            return prazoDevolucaoDias;
+        }
+        if (PESQUISADOR.equals(tipoUsuario)) {
             return PRAZO_MAXIMO;
-        } else return prazoDevolucao;
+        }
+        throw new ResponseStatusException(BAD_REQUEST, "Prazo deve ser preenchido");
     }
 }

@@ -1,5 +1,7 @@
 package br.com.zup.library.compartilhado.handler;
 
+import br.com.zup.library.compartilhado.exception.ExemplarIndisponivelException;
+import br.com.zup.library.compartilhado.exception.LimiteEmprestimoExcedidoException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,5 +34,17 @@ public class ExceptionsHandler {
         });
 
         return new ExceptionHandlerResponse(map);
+    }
+
+    @ExceptionHandler(ExemplarIndisponivelException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public String exemplarIndisponivelExceptionHandler(ExemplarIndisponivelException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(LimiteEmprestimoExcedidoException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public String limiteEmprestimoExcedidoExceptionHandler(LimiteEmprestimoExcedidoException ex) {
+        return ex.getMessage();
     }
 }

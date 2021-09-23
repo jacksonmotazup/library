@@ -79,7 +79,7 @@ class EmprestimoControllerTest {
             emprestimoRepository.findById(resposta.getIdEmprestimo()).ifPresentOrElse(emprestimo -> assertAll(
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
-                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucao()),
+                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
                             () -> assertFalse(exemplarLivre.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -101,7 +101,7 @@ class EmprestimoControllerTest {
             emprestimoRepository.findById(resposta.getIdEmprestimo()).ifPresentOrElse(emprestimo -> assertAll(
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
-                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucao()),
+                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
                             () -> assertFalse(exemplarLivre.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -123,7 +123,7 @@ class EmprestimoControllerTest {
             emprestimoRepository.findById(resposta.getIdEmprestimo()).ifPresentOrElse(emprestimo -> assertAll(
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
-                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucao()),
+                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
                             () -> assertFalse(exemplarRestrito.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -146,8 +146,8 @@ class EmprestimoControllerTest {
             emprestimoRepository.findById(resposta.getIdEmprestimo()).ifPresentOrElse(emprestimo -> assertAll(
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
-                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucao()),
-                            () -> assertEquals(60, emprestimo.getPrazoDevolucao()),
+                            () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
+                            () -> assertEquals(60, emprestimo.getPrazoDevolucaoDias()),
                             () -> assertFalse(exemplarRestrito.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -156,14 +156,15 @@ class EmprestimoControllerTest {
 
 
         @Test
-        @DisplayName("Não deve cadastrar novo emprestimo de um exemplar restrito de um livro para um usuário padrão, retornar 404")
+        @DisplayName("Não deve cadastrar novo emprestimo de um exemplar restrito de um livro para um usuário padrão, " +
+                "retornar 400")
         void naoDeveCadastrarNovoEmprestimoExemplarRestritoUsuarioPadrao() throws Exception {
             salvaExemplar(RESTRITA);
             var request = montaRequest(usuarioPadrao);
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -210,7 +211,7 @@ class EmprestimoControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
                     .andExpect(status().isBadRequest())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -239,7 +240,7 @@ class EmprestimoControllerTest {
             mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("tituloLivro").value(livro.getTitulo()))
-                    .andExpect(jsonPath("prazoDevolucao").value(request.getPrazoDevolucao()));
+                    .andExpect(jsonPath("prazoDevolucao").value(request.getPrazoDevolucaoDias()));
 
             var emprestimos = emprestimoRepository.count();
 
@@ -250,13 +251,13 @@ class EmprestimoControllerTest {
 
         @Test
         @DisplayName("Não deve cadastrar novo emprestimo de um exemplar de um livro para um usuário padrão " +
-                "sem exemplar disponivel, retornar 404")
+                "sem exemplar disponivel, retornar 400")
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPadraoSemExemplarDisponivel() throws Exception {
             var request = montaRequest(usuarioPadrao);
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -268,13 +269,13 @@ class EmprestimoControllerTest {
 
         @Test
         @DisplayName("Não deve cadastrar novo emprestimo de um exemplar de um livro para um usuário pesquisador " +
-                "sem exemplar disponivel, retornar 404")
+                "sem exemplar disponivel, retornar 400")
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPesquisadorSemExemplarDisponivel() throws Exception {
             var request = montaRequest(usuarioPesquisador);
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -286,16 +287,16 @@ class EmprestimoControllerTest {
 
         @Test
         @DisplayName("Não deve cadastrar novo emprestimo de um exemplar de um livro para um usuário pesquisador " +
-                "com exemplar indisponivel, retornar 404")
+                "com exemplar indisponivel, retornar 400")
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPesquisadorComExemplarIndisponivel() throws Exception {
             var exemplar = new Exemplar(LIVRE, livro);
-            exemplar.alteraDisponibilidade();
+            exemplar.reserva();
             exemplarRepository.save(exemplar);
             var request = montaRequest(usuarioPesquisador);
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -307,16 +308,16 @@ class EmprestimoControllerTest {
 
         @Test
         @DisplayName("Não deve cadastrar novo emprestimo de um exemplar de um livro para um usuário padrao " +
-                "com exemplar indisponivel, retornar 404")
+                "com exemplar indisponivel, retornar 400")
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPadraoComExemplarIndisponivel() throws Exception {
             var exemplar = new Exemplar(LIVRE, livro);
-            exemplar.alteraDisponibilidade();
+            exemplar.reserva();
             exemplarRepository.save(exemplar);
             var request = montaRequest(usuarioPadrao);
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -344,8 +345,8 @@ class EmprestimoControllerTest {
                     () -> assertEquals(3, resposta.getErros().size()),
                     () -> assertTrue(resposta.getErros().containsKey("idLivro")),
                     () -> assertTrue(resposta.getErros().containsKey("idUsuario")),
-                    () -> assertTrue(resposta.getErros().containsKey("prazoDevolucao")),
-                    () -> assertTrue(resposta.getErros().get("prazoDevolucao").contains("deve estar entre 1 e 60")),
+                    () -> assertTrue(resposta.getErros().containsKey("prazoDevolucaoDias")),
+                    () -> assertTrue(resposta.getErros().get("prazoDevolucaoDias").contains("deve estar entre 1 e 60")),
                     () -> assertTrue(resposta.getErros().get("idLivro").contains("não deve ser nulo")),
                     () -> assertTrue(resposta.getErros().get("idUsuario").contains("não deve ser nulo")),
                     () -> assertNotNull(resposta.getOcorridoEm()),
