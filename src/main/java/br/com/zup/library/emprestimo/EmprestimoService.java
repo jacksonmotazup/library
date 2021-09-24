@@ -17,6 +17,7 @@ import static br.com.zup.library.usuario.TipoUsuario.PADRAO;
 @Service
 public class EmprestimoService {
 
+    public final int QTD_MAX_EMPRESTIMO_USUARIO_PADRAO = 5;
     private final EmprestimoRepository emprestimoRepository;
     private final ExemplarRepository exemplarRepository;
 
@@ -28,7 +29,7 @@ public class EmprestimoService {
     }
 
     @Transactional
-    public NovoEmprestimoResponse realizaEmprestimo(SolicitacaoEmprestimo solicitacao) {
+    public Emprestimo realizaEmprestimo(SolicitacaoEmprestimo solicitacao) {
         var usuario = solicitacao.getUsuario();
         var livro = solicitacao.getLivro();
 
@@ -36,22 +37,18 @@ public class EmprestimoService {
 
         var exemplar = buscaExemplar(livro, usuario);
 
-        var novoEmprestimo = toModel(solicitacao, exemplar, usuario);
+        var novoEmprestimo = exemplar.reservaEmprestimo(solicitacao.getPrazoDevolucao(), usuario);
 
         emprestimoRepository.save(novoEmprestimo);
-        exemplarRepository.save(exemplar.reserva());
 
-        return new NovoEmprestimoResponse(novoEmprestimo);
+        return novoEmprestimo;
     }
 
     private void validaNumeroMaximoEmprestimos(Usuario usuario) {
-        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.existeLimiteEmprestimoPorUsuario(usuario)) {
+        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.countByUsuario(usuario) >=
+                QTD_MAX_EMPRESTIMO_USUARIO_PADRAO) {
             throw new LimiteEmprestimoExcedidoException("Usuário padrão só pode ter 5 empréstimos simultâneos");
         }
-    }
-
-    private Emprestimo toModel(SolicitacaoEmprestimo solicitacao, Exemplar exemplar, Usuario usuario) {
-        return new Emprestimo(solicitacao.getPrazoDevolucao(), exemplar, usuario);
     }
 
     private Exemplar buscaExemplar(Livro livro, Usuario usuario) {

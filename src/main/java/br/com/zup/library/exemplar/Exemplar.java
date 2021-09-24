@@ -1,6 +1,8 @@
 package br.com.zup.library.exemplar;
 
+import br.com.zup.library.emprestimo.Emprestimo;
 import br.com.zup.library.livro.Livro;
+import br.com.zup.library.usuario.Usuario;
 
 import javax.persistence.*;
 
@@ -55,5 +57,10 @@ public class Exemplar {
     public Exemplar devolve() {
         this.disponivel = true;
         return this;
+    }
+
+    public Emprestimo reservaEmprestimo(Integer prazoDevolucao, Usuario usuario) {
+        var exemplar = this.reserva();
+        return new Emprestimo(prazoDevolucao, exemplar, usuario);
     }
 }

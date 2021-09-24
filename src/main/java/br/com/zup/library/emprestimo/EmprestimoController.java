@@ -28,6 +28,9 @@ public class EmprestimoController {
     @PostMapping
     public NovoEmprestimoResponse cadastra(@Valid @RequestBody NovoEmprestimoRequest request) {
         var solicitacaoEmprestimo = request.toModel(usuarioRepository, livroRepository);
-        return emprestimoService.realizaEmprestimo(solicitacaoEmprestimo);
+
+        var emprestimo = emprestimoService.realizaEmprestimo(solicitacaoEmprestimo);
+
+        return new NovoEmprestimoResponse(emprestimo);
     }
 }
