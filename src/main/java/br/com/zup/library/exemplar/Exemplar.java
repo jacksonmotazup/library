@@ -20,6 +20,8 @@ public class Exemplar {
     @ManyToOne
     private Livro livro;
     private boolean disponivel = true;
+    @Version
+    private Long versao;
 
     public Exemplar(TipoCirculacao tipoCirculacao, Livro livro) {
         this.tipoCirculacao = tipoCirculacao;

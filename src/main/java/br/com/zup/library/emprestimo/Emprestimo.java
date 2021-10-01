@@ -11,11 +11,16 @@ public class Emprestimo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private Integer prazoDevolucaoDias;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Exemplar exemplar;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Usuario usuario;
 
     public Emprestimo(Integer prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {

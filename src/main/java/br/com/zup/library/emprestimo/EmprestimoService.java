@@ -36,30 +36,28 @@ public class EmprestimoService {
         validaNumeroMaximoEmprestimos(usuario);
 
         var exemplar = buscaExemplar(livro, usuario);
-
         var novoEmprestimo = exemplar.reservaEmprestimo(solicitacao.getPrazoDevolucao(), usuario);
-
         emprestimoRepository.save(novoEmprestimo);
 
         return novoEmprestimo;
     }
 
     private void validaNumeroMaximoEmprestimos(Usuario usuario) {
-        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.countByUsuario(usuario) >=
-                QTD_MAX_EMPRESTIMO_USUARIO_PADRAO) {
+        if (PADRAO.equals(usuario.getTipoUsuario()) && emprestimoRepository.countByUsuario(usuario)
+                >= QTD_MAX_EMPRESTIMO_USUARIO_PADRAO) {
             throw new LimiteEmprestimoExcedidoException("Usuário padrão só pode ter 5 empréstimos simultâneos");
         }
     }
 
     private Exemplar buscaExemplar(Livro livro, Usuario usuario) {
-        Exemplar exemplar;
         if (PADRAO.equals(usuario.getTipoUsuario())) {
-            exemplar = exemplarRepository.findFirstByLivroAndTipoCirculacaoAndDisponivelTrue(livro, LIVRE)
+            return exemplarRepository.findFirstByLivroAndTipoCirculacaoAndDisponivelTrue(livro, LIVRE)
                     .orElseThrow(() -> new ExemplarIndisponivelException("Não existe exemplar disponível"));
-        } else exemplar = exemplarRepository.findFirstByLivroAndDisponivelTrueOrderByTipoCirculacaoDesc(livro)
+
+        }
+        return exemplarRepository.findFirstByLivroAndDisponivelTrueOrderByTipoCirculacaoDesc(livro)
                 .orElseThrow(() -> new ExemplarIndisponivelException("Não existe exemplar disponível"));
 
-        return exemplar;
     }
 
 }
