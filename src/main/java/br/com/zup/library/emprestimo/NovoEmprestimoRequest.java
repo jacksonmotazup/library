@@ -1,15 +1,12 @@
 package br.com.zup.library.emprestimo;
 
 import br.com.zup.library.livro.LivroRepository;
-import br.com.zup.library.usuario.TipoUsuario;
 import br.com.zup.library.usuario.UsuarioRepository;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
 
-import static br.com.zup.library.usuario.TipoUsuario.PESQUISADOR;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 
@@ -49,18 +46,8 @@ public class NovoEmprestimoRequest {
         var livro = livroRepository.findById(idLivro)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Livro não encontrado"));
 
-        var prazoDevolucaoFinal = retornaPrazoDevolucao(usuario.getTipoUsuario());
+        var prazoDevolucaoFinal = usuario.getTipoUsuario().calculaPrazoDeDevolucaoMaximo(prazoDevolucaoDias);
 
         return new SolicitacaoEmprestimo(usuario, livro, prazoDevolucaoFinal);
-    }
-
-    private Integer retornaPrazoDevolucao(TipoUsuario tipoUsuario) {
-        if (prazoDevolucaoDias != null) {
-            return prazoDevolucaoDias;
-        }
-        if (PESQUISADOR.equals(tipoUsuario)) {
-            return PRAZO_MAXIMO;
-        }
-        throw new ResponseStatusException(BAD_REQUEST, "Prazo deve ser preenchido");
     }
 }
