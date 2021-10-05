@@ -1,11 +1,11 @@
 package br.com.zup.library.compartilhado.handler;
 
-import br.com.zup.library.compartilhado.exception.ExemplarIndisponivelException;
-import br.com.zup.library.compartilhado.exception.LimiteEmprestimoExcedidoException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,15 +36,16 @@ public class ExceptionsHandler {
         return new ExceptionHandlerResponse(map);
     }
 
-    @ExceptionHandler(ExemplarIndisponivelException.class)
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> responseStatusExceptionHandler(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getReason());
+    }
+
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(BAD_REQUEST)
-    public String exemplarIndisponivelExceptionHandler(ExemplarIndisponivelException ex) {
+    public String exceptionHandler(Exception ex) {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(LimiteEmprestimoExcedidoException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public String limiteEmprestimoExcedidoExceptionHandler(LimiteEmprestimoExcedidoException ex) {
-        return ex.getMessage();
-    }
+
 }

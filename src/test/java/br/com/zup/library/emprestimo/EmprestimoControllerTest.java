@@ -183,7 +183,7 @@ class EmprestimoControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
                     .andExpect(status().isBadRequest())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -363,7 +363,7 @@ class EmprestimoControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
                     .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
@@ -382,7 +382,7 @@ class EmprestimoControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
                     .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andReturn().getResponse().getContentAsString();
 
             var emprestimos = emprestimoRepository.count();
 
