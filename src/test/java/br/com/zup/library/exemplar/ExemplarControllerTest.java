@@ -86,7 +86,7 @@ class ExemplarControllerTest {
 
             var response = mockMvc.perform(testUtils.aPostWith(request, uri))
                     .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getErrorMessage();
+                    .andReturn().getResponse().getContentAsString();
 
             var exemplares = exemplarRepository.count();
 

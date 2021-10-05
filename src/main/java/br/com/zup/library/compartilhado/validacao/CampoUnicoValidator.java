@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 public class CampoUnicoValidator implements ConstraintValidator<CampoUnico, Object> {
 
     private String campo;
-    private Class<?> klass;
+    private Class<?> classe;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -16,12 +16,12 @@ public class CampoUnicoValidator implements ConstraintValidator<CampoUnico, Obje
     @Override
     public void initialize(CampoUnico parametros) {
         campo = parametros.campo();
-        klass = parametros.classe();
+        classe = parametros.classe();
     }
 
     @Override
     public boolean isValid(Object valor, ConstraintValidatorContext context) {
-        var resultado = entityManager.createQuery("SELECT 1 FROM " + klass.getName() + " WHERE " + campo + "=?1")
+        var resultado = entityManager.createQuery("SELECT 1 FROM " + classe.getName() + " WHERE " + campo + "=?1")
                 .setParameter(1, valor)
                 .getResultList();
 

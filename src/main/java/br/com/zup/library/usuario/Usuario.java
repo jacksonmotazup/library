@@ -1,8 +1,6 @@
 package br.com.zup.library.usuario;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -12,6 +10,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;
 
     public Usuario(TipoUsuario tipoUsuario) {

@@ -1,6 +1,8 @@
 package br.com.zup.library.exemplar;
 
+import br.com.zup.library.emprestimo.Emprestimo;
 import br.com.zup.library.livro.Livro;
+import br.com.zup.library.usuario.Usuario;
 
 import javax.persistence.*;
 
@@ -17,6 +19,9 @@ public class Exemplar {
     private TipoCirculacao tipoCirculacao;
     @ManyToOne
     private Livro livro;
+    private boolean disponivel = true;
+    @Version
+    private Long versao;
 
     public Exemplar(TipoCirculacao tipoCirculacao, Livro livro) {
         this.tipoCirculacao = tipoCirculacao;
@@ -40,5 +45,24 @@ public class Exemplar {
 
     public Livro getLivro() {
         return livro;
+    }
+
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public Exemplar reserva() {
+        this.disponivel = false;
+        return this;
+    }
+
+    public Exemplar devolve() {
+        this.disponivel = true;
+        return this;
+    }
+
+    public Emprestimo reservaEmprestimo(Integer prazoDevolucao, Usuario usuario) {
+        var exemplar = this.reserva();
+        return new Emprestimo(prazoDevolucao, exemplar, usuario);
     }
 }
