@@ -4,7 +4,7 @@ public class NovoEmprestimoResponse {
 
     private Long idEmprestimo;
     private String tituloLivro;
-    private Integer prazoDevolucao;
+    private Long prazoDevolucao;
 
     public NovoEmprestimoResponse(Emprestimo emprestimo) {
         this.idEmprestimo = emprestimo.getId();
@@ -23,7 +23,7 @@ public class NovoEmprestimoResponse {
         return tituloLivro;
     }
 
-    public Integer getPrazoDevolucao() {
+    public Long getPrazoDevolucao() {
         return prazoDevolucao;
     }
 }

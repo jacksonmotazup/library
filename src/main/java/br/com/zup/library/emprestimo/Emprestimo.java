@@ -14,7 +14,7 @@ public class Emprestimo {
     private Long id;
 
     @Column(nullable = false)
-    private Integer prazoDevolucaoDias;
+    private Long prazoDevolucaoDias;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -27,7 +27,7 @@ public class Emprestimo {
     @Column(nullable = false, updatable = false)
     private final LocalDate dataCriacao = LocalDate.now();
 
-    public Emprestimo(Integer prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
+    public Emprestimo(Long prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
         this.prazoDevolucaoDias = prazoDevolucaoDias;
         this.exemplar = exemplar;
         this.usuario = usuario;
@@ -48,7 +48,7 @@ public class Emprestimo {
         return exemplar;
     }
 
-    public Integer getPrazoDevolucaoDias() {
+    public Long getPrazoDevolucaoDias() {
         return prazoDevolucaoDias;
     }
 
@@ -58,5 +58,12 @@ public class Emprestimo {
 
     public LocalDate getDataCriacao() {
         return dataCriacao;
+    }
+
+    public boolean emprestimoExpirado() {
+        var prazo = dataCriacao.toEpochDay() + prazoDevolucaoDias;
+        var agora = LocalDate.now().toEpochDay();
+
+        return prazo - agora < 0;
     }
 }

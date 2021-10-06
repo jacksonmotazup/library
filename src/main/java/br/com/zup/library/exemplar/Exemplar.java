@@ -61,7 +61,7 @@ public class Exemplar {
         return this;
     }
 
-    public Emprestimo reservaEmprestimo(Integer prazoDevolucao, Usuario usuario) {
+    public Emprestimo reservaEmprestimo(Long prazoDevolucao, Usuario usuario) {
         var exemplar = this.reserva();
         return new Emprestimo(prazoDevolucao, exemplar, usuario);
     }

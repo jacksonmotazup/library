@@ -28,6 +28,7 @@ import java.util.List;
 import static br.com.zup.library.exemplar.TipoCirculacao.LIVRE;
 import static br.com.zup.library.exemplar.TipoCirculacao.RESTRITA;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @ActiveProfiles("test")
 class EmprestimoControllerTest {
+
+    public final String URI_EMPRESTIMOS = "/api/v1/emprestimos";
 
     @Autowired
     private TestUtils testUtils;
@@ -71,7 +74,7 @@ class EmprestimoControllerTest {
             var exemplarLivre = salvaExemplar(LIVRE);
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -95,7 +98,7 @@ class EmprestimoControllerTest {
             var exemplarLivre = salvaExemplar(LIVRE);
             var request = montaRequest(usuarioPesquisador);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -119,7 +122,7 @@ class EmprestimoControllerTest {
             var exemplarRestrito = salvaExemplar(RESTRITA);
             var request = montaRequest(usuarioPesquisador);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -144,7 +147,7 @@ class EmprestimoControllerTest {
             var exemplarRestrito = salvaExemplar(RESTRITA);
             var request = montaRequestPrazoNulo(usuarioPesquisador);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -171,7 +174,7 @@ class EmprestimoControllerTest {
             salvaExemplar(RESTRITA);
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -190,7 +193,7 @@ class EmprestimoControllerTest {
             salvaExemplar(LIVRE);
             var request = montaRequestPrazoNulo(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -209,16 +212,16 @@ class EmprestimoControllerTest {
             var exemplar = new Exemplar(LIVRE, livro);
             exemplarRepository.saveAll(List.of(exemplar, exemplar, exemplar, exemplar, exemplar, exemplar, exemplar));
 
-            var emprestimo1 = new Emprestimo(10, exemplar, usuarioPadrao);
-            var emprestimo2 = new Emprestimo(10, exemplar, usuarioPadrao);
-            var emprestimo3 = new Emprestimo(10, exemplar, usuarioPadrao);
-            var emprestimo4 = new Emprestimo(10, exemplar, usuarioPadrao);
-            var emprestimo5 = new Emprestimo(10, exemplar, usuarioPadrao);
+            var emprestimo1 = new Emprestimo(10L, exemplar, usuarioPadrao);
+            var emprestimo2 = new Emprestimo(10L, exemplar, usuarioPadrao);
+            var emprestimo3 = new Emprestimo(10L, exemplar, usuarioPadrao);
+            var emprestimo4 = new Emprestimo(10L, exemplar, usuarioPadrao);
+            var emprestimo5 = new Emprestimo(10L, exemplar, usuarioPadrao);
             emprestimoRepository.saveAll(List.of(emprestimo1, emprestimo2, emprestimo3, emprestimo4, emprestimo5));
 
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -237,16 +240,16 @@ class EmprestimoControllerTest {
             var exemplar = new Exemplar(LIVRE, livro);
             exemplarRepository.saveAll(List.of(exemplar, exemplar, exemplar, exemplar, exemplar, exemplar, exemplar));
 
-            var emprestimo1 = new Emprestimo(10, exemplar, usuarioPesquisador);
-            var emprestimo2 = new Emprestimo(10, exemplar, usuarioPesquisador);
-            var emprestimo3 = new Emprestimo(10, exemplar, usuarioPesquisador);
-            var emprestimo4 = new Emprestimo(10, exemplar, usuarioPesquisador);
-            var emprestimo5 = new Emprestimo(10, exemplar, usuarioPesquisador);
+            var emprestimo1 = new Emprestimo(10L, exemplar, usuarioPesquisador);
+            var emprestimo2 = new Emprestimo(10L, exemplar, usuarioPesquisador);
+            var emprestimo3 = new Emprestimo(10L, exemplar, usuarioPesquisador);
+            var emprestimo4 = new Emprestimo(10L, exemplar, usuarioPesquisador);
+            var emprestimo5 = new Emprestimo(10L, exemplar, usuarioPesquisador);
             emprestimoRepository.saveAll(List.of(emprestimo1, emprestimo2, emprestimo3, emprestimo4, emprestimo5));
 
             var request = montaRequest(usuarioPesquisador);
 
-            mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("tituloLivro").value(livro.getTitulo()))
                     .andExpect(jsonPath("prazoDevolucao").value(request.getPrazoDevolucaoDias()));
@@ -264,7 +267,7 @@ class EmprestimoControllerTest {
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPadraoSemExemplarDisponivel() throws Exception {
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -282,7 +285,7 @@ class EmprestimoControllerTest {
         void naoDeveCadastrarNovoEmprestimoExemplarUsuarioPesquisadorSemExemplarDisponivel() throws Exception {
             var request = montaRequest(usuarioPesquisador);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -303,7 +306,7 @@ class EmprestimoControllerTest {
             exemplarRepository.save(exemplar);
             var request = montaRequest(usuarioPesquisador);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -324,7 +327,7 @@ class EmprestimoControllerTest {
             exemplarRepository.save(exemplar);
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -340,9 +343,9 @@ class EmprestimoControllerTest {
         @DisplayName("Não deve cadastrar emprestimo com request inválido")
         void naoDeveCadastrarNovoEmprestimoComRequestInvalido() throws Exception {
             salvaExemplar(LIVRE);
-            var request = new NovoEmprestimoRequest(null, null, 61);
+            var request = new NovoEmprestimoRequest(null, null, 61L);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -370,7 +373,7 @@ class EmprestimoControllerTest {
 
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isNotFound())
                     .andReturn().getResponse().getContentAsString();
 
@@ -389,7 +392,7 @@ class EmprestimoControllerTest {
 
             var request = montaRequest(usuarioPadrao);
 
-            var response = mockMvc.perform(testUtils.aPostWith(request, "/api/v1/emprestimos"))
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
                     .andExpect(status().isNotFound())
                     .andReturn().getResponse().getContentAsString();
 
@@ -399,6 +402,24 @@ class EmprestimoControllerTest {
                     () -> assertEquals("Livro não encontrado", response),
                     () -> assertEquals(0, emprestimos)
             );
+        }
+
+        @Test
+        @DisplayName("Não deve cadastrar empréstimo com usuário tendo empréstimo expirado, retornar 400")
+        void naoDeveCadastrarEmprestimoComEmprestimoExpirado() throws Exception {
+            var exemplar = salvaExemplar(LIVRE);
+            var emprestimo = new Emprestimo(10L, exemplar, usuarioPadrao);
+            setField(emprestimo, "dataCriacao", LocalDate.now().minusDays(11L));
+
+            emprestimoRepository.save(emprestimo);
+
+            var request = montaRequest(usuarioPadrao);
+
+            var response = mockMvc.perform(testUtils.aPostWith(request, URI_EMPRESTIMOS))
+                    .andExpect(status().isBadRequest())
+                    .andReturn().getResponse().getContentAsString();
+
+            assertEquals("Existe empréstimo expirado", response);
         }
     }
 
@@ -413,7 +434,7 @@ class EmprestimoControllerTest {
     }
 
     private NovoEmprestimoRequest montaRequest(Usuario usuario) {
-        return new NovoEmprestimoRequest(livro.getId(), usuario.getId(), 20);
+        return new NovoEmprestimoRequest(livro.getId(), usuario.getId(), 20L);
     }
 
 }

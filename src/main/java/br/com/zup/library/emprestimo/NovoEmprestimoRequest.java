@@ -19,9 +19,9 @@ public class NovoEmprestimoRequest {
     @NotNull
     private final Long idUsuario;
     @Range(min = 1, max = 60)
-    private final Integer prazoDevolucaoDias;
+    private final Long prazoDevolucaoDias;
 
-    public NovoEmprestimoRequest(Long idLivro, Long idUsuario, Integer prazoDevolucaoDias) {
+    public NovoEmprestimoRequest(Long idLivro, Long idUsuario, Long prazoDevolucaoDias) {
         this.idLivro = idLivro;
         this.idUsuario = idUsuario;
         this.prazoDevolucaoDias = prazoDevolucaoDias;
@@ -35,7 +35,7 @@ public class NovoEmprestimoRequest {
         return idUsuario;
     }
 
-    public Integer getPrazoDevolucaoDias() {
+    public Long getPrazoDevolucaoDias() {
         return prazoDevolucaoDias;
     }
 

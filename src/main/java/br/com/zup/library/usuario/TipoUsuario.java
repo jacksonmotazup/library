@@ -8,7 +8,7 @@ public enum TipoUsuario {
 
     PADRAO {
         @Override
-        public Integer calculaPrazoDeDevolucaoMaximo(Integer prazoDevolucaoDias) {
+        public Long calculaPrazoDeDevolucaoMaximo(Long prazoDevolucaoDias) {
             if (prazoDevolucaoDias != null) {
                 return prazoDevolucaoDias;
             }
@@ -18,10 +18,10 @@ public enum TipoUsuario {
 
     PESQUISADOR {
         @Override
-        public Integer calculaPrazoDeDevolucaoMaximo(Integer prazoDevolucaoDias) {
-            return Objects.requireNonNullElse(prazoDevolucaoDias, 60);
+        public Long calculaPrazoDeDevolucaoMaximo(Long prazoDevolucaoDias) {
+            return Objects.requireNonNullElse(prazoDevolucaoDias, 60L);
         }
     };
 
-    public abstract Integer calculaPrazoDeDevolucaoMaximo(Integer prazoDevolucaoDias);
+    public abstract Long calculaPrazoDeDevolucaoMaximo(Long prazoDevolucaoDias);
 }
