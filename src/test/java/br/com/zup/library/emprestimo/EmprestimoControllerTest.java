@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static br.com.zup.library.exemplar.TipoCirculacao.LIVRE;
@@ -80,6 +81,8 @@ class EmprestimoControllerTest {
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
                             () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
+                            () -> assertEquals(LocalDate.now(), emprestimo.getDataCriacao()),
+                            () -> assertEquals(usuarioPadrao, emprestimo.getUsuario()),
                             () -> assertFalse(exemplarLivre.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -102,6 +105,8 @@ class EmprestimoControllerTest {
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
                             () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
+                            () -> assertEquals(LocalDate.now(), emprestimo.getDataCriacao()),
+                            () -> assertEquals(usuarioPesquisador, emprestimo.getUsuario()),
                             () -> assertFalse(exemplarLivre.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -124,6 +129,8 @@ class EmprestimoControllerTest {
                             () -> assertEquals(resposta.getIdEmprestimo(), emprestimo.getId()),
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
                             () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
+                            () -> assertEquals(LocalDate.now(), emprestimo.getDataCriacao()),
+                            () -> assertEquals(usuarioPesquisador, emprestimo.getUsuario()),
                             () -> assertFalse(exemplarRestrito.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")
@@ -148,6 +155,8 @@ class EmprestimoControllerTest {
                             () -> assertEquals(resposta.getTituloLivro(), emprestimo.getExemplar().getLivro().getTitulo()),
                             () -> assertEquals(resposta.getPrazoDevolucao(), emprestimo.getPrazoDevolucaoDias()),
                             () -> assertEquals(60, emprestimo.getPrazoDevolucaoDias()),
+                            () -> assertEquals(LocalDate.now(), emprestimo.getDataCriacao()),
+                            () -> assertEquals(usuarioPesquisador, emprestimo.getUsuario()),
                             () -> assertFalse(exemplarRestrito.isDisponivel())
                     ),
                     () -> fail("Exemplar não encontrado")

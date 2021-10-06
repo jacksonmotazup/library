@@ -4,6 +4,7 @@ import br.com.zup.library.exemplar.Exemplar;
 import br.com.zup.library.usuario.Usuario;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class Emprestimo {
@@ -22,6 +23,9 @@ public class Emprestimo {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Usuario usuario;
+
+    @Column(nullable = false, updatable = false)
+    private final LocalDate dataCriacao = LocalDate.now();
 
     public Emprestimo(Integer prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
         this.prazoDevolucaoDias = prazoDevolucaoDias;
@@ -46,5 +50,13 @@ public class Emprestimo {
 
     public Integer getPrazoDevolucaoDias() {
         return prazoDevolucaoDias;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public LocalDate getDataCriacao() {
+        return dataCriacao;
     }
 }
