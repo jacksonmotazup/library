@@ -61,9 +61,6 @@ public class Emprestimo {
     }
 
     public boolean emprestimoExpirado() {
-        var prazo = dataCriacao.toEpochDay() + prazoDevolucaoDias;
-        var agora = LocalDate.now().toEpochDay();
-
-        return prazo - agora < 0;
+        return dataCriacao.plusDays(prazoDevolucaoDias).isBefore(LocalDate.now());
     }
 }
