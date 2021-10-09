@@ -410,6 +410,7 @@ class EmprestimoControllerTest {
             var exemplar = salvaExemplar(LIVRE);
             var emprestimo = new Emprestimo(10L, exemplar, usuarioPadrao);
             setField(emprestimo, "dataCriacao", LocalDate.now().minusDays(11L));
+            setField(emprestimo, "dataEstimadaEntrega", LocalDate.now().minusDays(1L));
 
             emprestimoRepository.save(emprestimo);
 

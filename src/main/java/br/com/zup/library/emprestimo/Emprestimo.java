@@ -27,10 +27,14 @@ public class Emprestimo {
     @Column(nullable = false, updatable = false)
     private final LocalDate dataCriacao = LocalDate.now();
 
+    @Column(nullable = false)
+    private LocalDate dataEstimadaEntrega;
+
     public Emprestimo(Long prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
         this.prazoDevolucaoDias = prazoDevolucaoDias;
         this.exemplar = exemplar;
         this.usuario = usuario;
+        this.dataEstimadaEntrega = dataCriacao.plusDays(prazoDevolucaoDias);
     }
 
     /**
@@ -44,12 +48,12 @@ public class Emprestimo {
         return id;
     }
 
-    public Exemplar getExemplar() {
-        return exemplar;
-    }
-
     public Long getPrazoDevolucaoDias() {
         return prazoDevolucaoDias;
+    }
+
+    public Exemplar getExemplar() {
+        return exemplar;
     }
 
     public Usuario getUsuario() {
@@ -60,7 +64,8 @@ public class Emprestimo {
         return dataCriacao;
     }
 
-    public boolean emprestimoExpirado() {
-        return dataCriacao.plusDays(prazoDevolucaoDias).isBefore(LocalDate.now());
+    public LocalDate getDataEstimadaEntrega() {
+        return dataEstimadaEntrega;
     }
+
 }

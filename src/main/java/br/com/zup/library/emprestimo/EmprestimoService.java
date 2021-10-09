@@ -31,12 +31,12 @@ public class EmprestimoService {
 
     @Transactional
     public Emprestimo realizaEmprestimo(SolicitacaoEmprestimo solicitacao) {
-        verificaEmprestimoExpirado(solicitacao);
+        this.verificaEmprestimoExpirado(solicitacao);
 
         var usuario = solicitacao.getUsuario();
         var livro = solicitacao.getLivro();
 
-        validaNumeroMaximoEmprestimos(usuario);
+        this.validaNumeroMaximoEmprestimos(usuario);
 
         var exemplar = buscaExemplar(livro, usuario);
         var novoEmprestimo = exemplar.reservaEmprestimo(solicitacao.getPrazoDevolucao(), usuario);
@@ -45,8 +45,7 @@ public class EmprestimoService {
     }
 
     private void verificaEmprestimoExpirado(SolicitacaoEmprestimo solicitacao) {
-        var emprestimos = emprestimoRepository.findAllByUsuario(solicitacao.getUsuario());
-        if (emprestimos.stream().anyMatch(Emprestimo::emprestimoExpirado)) {
+        if (emprestimoRepository.existeEmprestimoExpirado(solicitacao.getUsuario())) {
             throw new EmprestimoExpiradoException("Existe empréstimo expirado");
         }
     }
