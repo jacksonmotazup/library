@@ -1,5 +1,6 @@
 package br.com.zup.library.emprestimo;
 
+import br.com.zup.library.compartilhado.exception.EmprestimoExpiradoException;
 import br.com.zup.library.compartilhado.exception.ExemplarIndisponivelException;
 import br.com.zup.library.compartilhado.exception.LimiteEmprestimoExcedidoException;
 import br.com.zup.library.exemplar.Exemplar;
@@ -30,16 +31,23 @@ public class EmprestimoService {
 
     @Transactional
     public Emprestimo realizaEmprestimo(SolicitacaoEmprestimo solicitacao) {
+        this.verificaEmprestimoExpirado(solicitacao);
+
         var usuario = solicitacao.getUsuario();
         var livro = solicitacao.getLivro();
 
-        validaNumeroMaximoEmprestimos(usuario);
+        this.validaNumeroMaximoEmprestimos(usuario);
 
         var exemplar = buscaExemplar(livro, usuario);
         var novoEmprestimo = exemplar.reservaEmprestimo(solicitacao.getPrazoDevolucao(), usuario);
-        emprestimoRepository.save(novoEmprestimo);
 
-        return novoEmprestimo;
+        return emprestimoRepository.save(novoEmprestimo);
+    }
+
+    private void verificaEmprestimoExpirado(SolicitacaoEmprestimo solicitacao) {
+        if (emprestimoRepository.existeEmprestimoExpirado(solicitacao.getUsuario())) {
+            throw new EmprestimoExpiradoException("Existe empréstimo expirado");
+        }
     }
 
     private void validaNumeroMaximoEmprestimos(Usuario usuario) {

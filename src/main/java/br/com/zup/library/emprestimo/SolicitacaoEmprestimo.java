@@ -7,9 +7,9 @@ public class SolicitacaoEmprestimo {
 
     private final Usuario usuario;
     private final Livro livro;
-    private final Integer prazoDevolucao;
+    private final Long prazoDevolucao;
 
-    public SolicitacaoEmprestimo(Usuario usuario, Livro livro, Integer prazoDevolucao) {
+    public SolicitacaoEmprestimo(Usuario usuario, Livro livro, Long prazoDevolucao) {
         this.usuario = usuario;
         this.livro = livro;
         this.prazoDevolucao = prazoDevolucao;
@@ -19,7 +19,7 @@ public class SolicitacaoEmprestimo {
         return usuario;
     }
 
-    public Integer getPrazoDevolucao() {
+    public Long getPrazoDevolucao() {
         return prazoDevolucao;
     }
 
