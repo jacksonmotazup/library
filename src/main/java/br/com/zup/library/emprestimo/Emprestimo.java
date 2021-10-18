@@ -5,7 +5,9 @@ import br.com.zup.library.usuario.Usuario;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Objects;
+
+import static br.com.zup.library.emprestimo.StatusEmprestimo.DEVOLVIDO;
+import static br.com.zup.library.emprestimo.StatusEmprestimo.EMPRESTADO;
 
 @Entity
 public class Emprestimo {
@@ -30,6 +32,10 @@ public class Emprestimo {
 
     @Column(nullable = false)
     private LocalDate dataEstimadaDevolucao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusEmprestimo status = EMPRESTADO;
 
     private LocalDate dataDevolucao;
 
@@ -76,12 +82,17 @@ public class Emprestimo {
         return dataDevolucao;
     }
 
+    public StatusEmprestimo getStatus() {
+        return status;
+    }
+
     public void devolve() {
         this.dataDevolucao = LocalDate.now();
+        this.status = DEVOLVIDO;
         this.exemplar.devolve();
     }
 
     public boolean foiDevolvido() {
-        return !Objects.isNull(this.dataDevolucao);
+        return DEVOLVIDO.equals(this.status);
     }
 }

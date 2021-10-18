@@ -25,6 +25,8 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static br.com.zup.library.emprestimo.StatusEmprestimo.DEVOLVIDO;
+import static br.com.zup.library.emprestimo.StatusEmprestimo.EMPRESTADO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -77,6 +79,7 @@ class DevolucaoControllerTest {
 
             assertAll(
                     () -> assertEquals(LocalDate.now(), emprestimo.getDataDevolucao()),
+                    () -> assertEquals(DEVOLVIDO, emprestimo.getStatus()),
                     () -> assertTrue(emprestimo.foiDevolvido())
             );
         }
@@ -98,6 +101,7 @@ class DevolucaoControllerTest {
             assertAll(
                     () -> assertEquals(LocalDate.now(), emprestimo.getDataDevolucao()),
                     () -> assertTrue(emprestimo.foiDevolvido()),
+                    () -> assertEquals(DEVOLVIDO, emprestimo.getStatus()),
                     () -> assertEquals("Empréstimo já devolvido", response)
             );
         }
@@ -115,6 +119,7 @@ class DevolucaoControllerTest {
             assertAll(
                     () -> assertNull(emprestimo.getDataDevolucao()),
                     () -> assertFalse(emprestimo.foiDevolvido()),
+                    () -> assertEquals(EMPRESTADO, emprestimo.getStatus()),
                     () -> assertEquals("Empréstimo não encontrado", response)
             );
         }
