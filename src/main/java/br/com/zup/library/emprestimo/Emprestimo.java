@@ -6,6 +6,9 @@ import br.com.zup.library.usuario.Usuario;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+import static br.com.zup.library.emprestimo.StatusEmprestimo.DEVOLVIDO;
+import static br.com.zup.library.emprestimo.StatusEmprestimo.EMPRESTADO;
+
 @Entity
 public class Emprestimo {
 
@@ -28,13 +31,20 @@ public class Emprestimo {
     private final LocalDate dataCriacao = LocalDate.now();
 
     @Column(nullable = false)
-    private LocalDate dataEstimadaEntrega;
+    private LocalDate dataEstimadaDevolucao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusEmprestimo status = EMPRESTADO;
+
+    private LocalDate dataDevolucao;
+
 
     public Emprestimo(Long prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
         this.prazoDevolucaoDias = prazoDevolucaoDias;
         this.exemplar = exemplar;
         this.usuario = usuario;
-        this.dataEstimadaEntrega = dataCriacao.plusDays(prazoDevolucaoDias);
+        this.dataEstimadaDevolucao = dataCriacao.plusDays(prazoDevolucaoDias);
     }
 
     /**
@@ -64,8 +74,25 @@ public class Emprestimo {
         return dataCriacao;
     }
 
-    public LocalDate getDataEstimadaEntrega() {
-        return dataEstimadaEntrega;
+    public LocalDate getDataEstimadaDevolucao() {
+        return dataEstimadaDevolucao;
     }
 
+    public LocalDate getDataDevolucao() {
+        return dataDevolucao;
+    }
+
+    public StatusEmprestimo getStatus() {
+        return status;
+    }
+
+    public void devolve() {
+        this.dataDevolucao = LocalDate.now();
+        this.status = DEVOLVIDO;
+        this.exemplar.devolve();
+    }
+
+    public boolean foiDevolvido() {
+        return DEVOLVIDO.equals(this.status);
+    }
 }
