@@ -56,9 +56,8 @@ public class Exemplar {
         return this;
     }
 
-    public Exemplar devolve() {
+    public void devolve() {
         this.disponivel = true;
-        return this;
     }
 
     public Emprestimo reservaEmprestimo(Long prazoDevolucao, Usuario usuario) {

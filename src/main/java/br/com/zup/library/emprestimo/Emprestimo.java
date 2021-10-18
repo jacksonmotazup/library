@@ -5,6 +5,7 @@ import br.com.zup.library.usuario.Usuario;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Emprestimo {
@@ -28,13 +29,16 @@ public class Emprestimo {
     private final LocalDate dataCriacao = LocalDate.now();
 
     @Column(nullable = false)
-    private LocalDate dataEstimadaEntrega;
+    private LocalDate dataEstimadaDevolucao;
+
+    private LocalDate dataDevolucao;
+
 
     public Emprestimo(Long prazoDevolucaoDias, Exemplar exemplar, Usuario usuario) {
         this.prazoDevolucaoDias = prazoDevolucaoDias;
         this.exemplar = exemplar;
         this.usuario = usuario;
-        this.dataEstimadaEntrega = dataCriacao.plusDays(prazoDevolucaoDias);
+        this.dataEstimadaDevolucao = dataCriacao.plusDays(prazoDevolucaoDias);
     }
 
     /**
@@ -64,8 +68,20 @@ public class Emprestimo {
         return dataCriacao;
     }
 
-    public LocalDate getDataEstimadaEntrega() {
-        return dataEstimadaEntrega;
+    public LocalDate getDataEstimadaDevolucao() {
+        return dataEstimadaDevolucao;
     }
 
+    public LocalDate getDataDevolucao() {
+        return dataDevolucao;
+    }
+
+    public void devolve() {
+        this.dataDevolucao = LocalDate.now();
+        this.exemplar.devolve();
+    }
+
+    public boolean foiDevolvido() {
+        return !Objects.isNull(this.dataDevolucao);
+    }
 }
